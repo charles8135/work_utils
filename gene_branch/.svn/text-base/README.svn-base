@@ -1,0 +1,32 @@
+<项目分支开发环境搭建工具 v1.0>
+
+功能介绍：
+帮助dr-finance项目及其他类似项目快速搭建分支开发环境。具体特点如下：
+1. 自动帮助用户从主干co下项目的基本代码
+2. 自动将和环境相关的配置文件拷贝到co出来的项目目录下，用户可以自行定义哪些文件是和环境配置相关的，且统一放置在env_tmp文件夹下
+3. 按照gene_branch.conf配置文件描述自动帮助用户切换分支
+4. 将生成好的整体项目目录放到指定的开发路径下(通常都是/home/$USER)，并且帮助用户建立软连接
+
+使用方法：
+1. 更新每个开发者自己的env_tmp文件夹，该文件夹下的内容是和自己开发环境相关的配置文件 
+2. 设置gene_branch.sh脚本中## USER_CONFIG ##域内的内容。## SYS_CONFIG ##域内为高级设置，在不了解整个脚本逻辑的情况下，不建议修改
+3. 拷贝gene_branch.conf.sample为gene_branch.conf，并设置gene_branch.conf文件
+4. 在gene_branch.sh所在目录下，执行 sh gene_branch.sh
+
+
+gene_branch.conf格式要求：
+第1行：（必填，且必须为项目名称）
+分支开发项目名称，如：dr-finance-yizhanshi, dr-finance-zhekouquan ... （必填，且必须为项目名称）
+
+第2行及以后：（非必填，但通常要填写）
+格式为：
+<module_name>|<svn_path>，其中"|"为系统指定分隔符
+e.g.
+fp-marketing|https://svn.baidu.com/app/ecom/darwin/branches/dr-finance/fp-marketing/darwin_5-8-1_BRANCH
+
+
+tips:
+env_tmp下边有一份和dr-finance环境相关的配置，是liuyue的开发机的配置，大家如果需要使用，请修改该文件夹 :-P
+
+
+非常欢迎大家使用~~ :-)

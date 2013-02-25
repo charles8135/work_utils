@@ -1,0 +1,6 @@
+<?php
+$fpdir = realpath(dirname(__FILE__)).'/';
+set_include_path(get_include_path().":".$fpdir."baidu-commons/:".$fpdir."fp-conf/php/:".$fpdir."fp-biz/libs/:"
+.$fpdir."fp-api/libs/:".$fpdir."fp-mgr/libs/:".$fpdir."fp-netpay/libs/:".$fpdir."fp-script/libs/:".$fpdir."fp-credit/libs/:"
+.$fpdir."fp-stat/libs/:".$fpdir."fp-marketing/libs/:".$fpdir."libs/:".$fpdir."fp-test/fp-marketing/libs/:".$fpdir."fp-test/fp-biz/libs/");
+

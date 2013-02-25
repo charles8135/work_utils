@@ -1,0 +1,80 @@
+#!/bin/bash
+
+## USER_CONFIG ##
+SVN_BIN=svn
+PROJ_NAME=liuyue_test
+DES_PATH=/home/$USER
+SVN_ROOT=https://svn.liuyue.com/app/trunk/$PROJ_NAME
+## /USER_CONFIG
+
+## SYS_CONFIG ##
+CONFIG_FILE=gene_branch.conf
+ENV_TMP_DIR=env_tmp
+## /SYS_CONFIG ##
+
+src_path=`pwd`
+if [ -d $src_path/tmp ]; then 
+    rm -rf $src_path/tmp
+fi
+
+mkdir -p $src_path/tmp
+
+if [ ! -f $CONFIG_FILE ]; then
+    echo "$CONFIG_FILE is not exist..."
+    exit 1
+fi
+dev_proj_name=`head -1 $CONFIG_FILE`
+dev_proj_name=$PROJ_NAME-$dev_proj_name
+dev_tmp_path=$src_path/tmp/$dev_proj_name
+
+cd $src_path/tmp
+echo "checkout code..."
+$SVN_BIN co $SVN_ROOT $dev_proj_name > /dev/null
+
+if [ $? -ne 0 ]; then
+    echo "Warning: checkout code error..."
+    exit 1
+fi
+
+echo "switch branches..."
+for line in $(<$src_path/$CONFIG_FILE); do
+    module=`echo $line | awk -F "|" '{print $1}'`
+    svn_path=`echo $line | awk -F "|" '{print $2}'`
+    if [ -z "$module" -o -z "$svn_path" ]; then
+        continue
+    fi
+    if [ -d $dev_tmp_path/$module ]; then
+        # switch
+        cd $dev_tmp_path/$module
+        $SVN_BIN switch $svn_path ./ > /dev/null
+        if [ $? -ne 0 ]; then
+            echo "Warning: switch $module error..."
+        fi
+    else
+        echo "Warning: $dev_tmp_path/$module is not exist..."
+    fi
+done
+
+cd $src_path
+echo "copy env tmp files..."
+cp -rf $src_path/$ENV_TMP_DIR/* $dev_tmp_path
+
+if [ ! -e $DES_PATH/$dev_proj_name ]; then
+    cd $DES_PATH
+    echo "copy project to des path..."
+    cp -rf $dev_tmp_path $DES_PATH
+    if [ -L $DES_PATH/$PROJ_NAME ]; then
+        echo "delete old soft link..."
+        rm $DES_PATH/$PROJ_NAME
+    fi
+    if [ ! -e $DES_PATH/$PROJ_NAME ]; then
+        echo "create soft link..."
+        ln -s $DES_PATH/$dev_proj_name $PROJ_NAME
+    else
+        echo "Warning: $DES_PATH/$PROJ_NAME is not a soft link..."
+    fi
+else
+    echo "Warning: $DES_PATH/$dev_proj_name is exist..."
+fi
+
+echo "done"
